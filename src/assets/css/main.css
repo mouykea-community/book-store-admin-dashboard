@@ -1,0 +1,8 @@
+.form-control.is-invalid {
+    border-color: var(--bs-form-invalid-border-color);
+    padding-right: calc(1.5em + .75rem);
+    background: none !important;
+    background-repeat: no-repeat;
+    background-position: right calc(.375em + .1875rem) center;
+    background-size: calc(.75em + .375rem) calc(.75em + .375rem);
+}
