@@ -2,16 +2,28 @@ import { defineStore } from "pinia";
 import api from "@/api/api";
 import { ref } from "vue";
 export const useCategoryStore = defineStore(('category'), () => {
-    const categories = ref();
-    const category = ref();
-    const status = ref();
+    const categories = ref([]);   // ✅ array
+    const categoriesNoParam = ref([]);
+    const category = ref(null);   // ✅ null or {}
+    const status = ref("");
+    const search = ref('');
+    const fetchAllCategoryNoParam = async () => {
+        const res = await api.get('/categories', {
+            params: {
+                per_page: 100 || ''
+            }
+        });
+        categoriesNoParam.value = res.data.data ?? [];
+    }
     const fetchAllCategories = async () => {
         const res = await api.get('/categories', {
             params: {
-                status : status.value || ''
+                status: status.value || '',
+                search: search.value || '',
+                per_page : 100,
             }
         });
-        categories.value = res.data.data;
+        categories.value = res.data.data ?? [];
     }
     const createCategory = async (payload) => {
         const res = await api.post('/categories', payload);
@@ -21,7 +33,7 @@ export const useCategoryStore = defineStore(('category'), () => {
         const res = await api.get(`/categories/${id}`);
         category.value = res.data.data;
     }
-    const updateCategory = async (id , payload) => {
+    const updateCategory = async (id, payload) => {
         const res = await api.put(`/categories/${id}`, payload);
         return res.data;
     }
@@ -30,9 +42,13 @@ export const useCategoryStore = defineStore(('category'), () => {
         return res.data;
     }
     return {
-        categories, category, status ,  fetchAllCategories, createCategory,
+        categories, category, search,
+        status, categoriesNoParam,
+        fetchAllCategoryNoParam,
+        fetchAllCategories,
+        createCategory,
         fetchCategoryByID,
         updateCategory,
         deleteCategory,
-     }
+    }
 });

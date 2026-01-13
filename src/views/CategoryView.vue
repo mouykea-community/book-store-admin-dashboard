@@ -22,13 +22,14 @@
                         <span class="input-group-text bg-white">
                             <i class="bi bi-search"></i>
                         </span>
-                        <input type="text" class="form-control" placeholder="Search by name , description.." />
+                        <input type="text" class="form-control" placeholder="Search by name , description.."
+                        v-model="categoryStore.search" />
                     </div>
                 </div>
                 <div class="col-12 col-sm-6 col-lg-4 d-flex justify-content-end">
                     <select class="form-select" v-model="categoryStore.status"
                         @change="categoryStore.fetchAllCategories">
-                        <option value="">All Statuses</option>
+                        <option value="" selected>All Statuses</option>
                         <option value="1">Active</option>
                         <option value="2">Inactive</option>
                     </select>
@@ -45,8 +46,10 @@
                     <template #columns-description="{item}">
                         <h5>{{ item.description }}</h5>
                     </template>
-                    <template #columns-status="{item}">
-                        <h5>{{ item.status }}</h5>
+                    <template #column-status="{ item }">
+                        <p class="fw-bold" :class="item.status === 'active' ? 'text-success' : 'text-danger'">
+                            {{ item.status }}
+                        </p>
                     </template>
                     </BaseTable>
                 </div>
@@ -85,11 +88,10 @@
                 <div>
                     <label class="form-label mt-3">Status *</label>
                     <select class="form-select" v-model="form.status">
-                        <option value="" disabled>Select Status</option>
-                        <option value="active">
+                        <option value="1">
                             Active
                         </option>
-                        <option value="inactive">
+                        <option value="2">
                             Inactive
                         </option>
                     </select>
@@ -132,9 +134,10 @@ import BaseInput from '@/components/ui/base/BaseInput.vue';
 import BaseTable from '@/components/ui/base/BaseTable.vue';
 import { useCategoryStore } from '@/stores/category';
 import { useRequiredValidator } from '@/composables/useRequiredValidator';
+import { toast } from 'vue3-toastify'
 const { errors, validatedField } = useRequiredValidator();
 const categoryStore = useCategoryStore();
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 const isShow = ref(false);
 const isShowEdit = ref(false);
 const isLoading = ref(false);
@@ -145,6 +148,10 @@ const form = ref({
     description: "",
     status : ""
 });
+
+const notify = (message) => {
+    toast.success(message);
+}
 const columns = ref([
     { key: 'name', label: 'Name' },
     { key: 'description' , label : "Description"},
@@ -161,6 +168,7 @@ const formValidated = () => {
 }
 const resetForm = () => {
     form.value.title = '';
+    form.value.status = '';
     form.value.description = '';
 }
 onMounted(async () => {
@@ -186,7 +194,8 @@ const handleCreateCategory = async () => {
         console.log("data", form.value.title , form.value.description)
         await categoryStore.createCategory({
             name: form.value.title,
-            description : form.value.description
+            description: form.value.description,
+            status : 1
         });
     } catch(err) {
         console.log(err)
@@ -195,6 +204,7 @@ const handleCreateCategory = async () => {
         resetForm();
         categoryStore.fetchAllCategories();
         isShow.value = false;
+        notify("Category created successfully !");
     }
 }
 
@@ -217,7 +227,7 @@ const handleUpdateCategory = async () => {
         await categoryStore.updateCategory(uuid.value, {
             name: form.value.title,
             description: form.value.description,
-            status: form.value.status === "active" ? 1 : 2
+            status: form.value.status
         });
     } catch (err) {
         console.log(err);
@@ -225,6 +235,7 @@ const handleUpdateCategory = async () => {
         await categoryStore.fetchAllCategories();
         isLoading.value = false;
         isShowEdit.value = false;
+        notify("Category Updated Successfully !");
     }
 }
 const openDeleteModal = (id) => {
@@ -241,9 +252,16 @@ const handleDeleteCategory = async () => {
         isLoading.value = false;
         await categoryStore.fetchAllCategories();
         isShowDelete.value = false;
+        notify("Category update successfully !");
     }
 }
-watch(categoryStore.status, () => {
-    categoryStore.fetchAllCategories();
-});
+let timeout = null;
+watch(() => categoryStore.search,
+    (newVal) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            categoryStore.fetchAllCategories();
+        }, 300);
+    }
+)
 </script>

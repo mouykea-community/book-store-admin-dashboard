@@ -1,29 +1,27 @@
 <template>
     <form class="grid gap-3 content-start">
-        <div>
-            <BaseInput label="Title *" v-model="formData.title" :error="errors.title"
+        <div class="d-flex gap-3">
+            <BaseInput class="w-50" label="Title *" v-model="formData.title" :error="errors.title"
                 @blur="validatedField('title', formData.title, 'Title is required')" />
-        </div>
-        <div>
-            <label class="form-label mt-3">Category *</label>
-            <select class="form-select" v-model="formData.categoryId" :class="{ 'is-invalid': errors.categoryId }"
-                @change="validatedField('categoryId', formData.categoryId, 'Category is required')">
-                <option value="" disabled>Select category</option>
-                <option v-for="category in categoryStore.categories" :key="category.id" :value="category.id">
-                    {{ category.name }}
-                </option>
-            </select>
-            <div v-if="errors.categoryId" class="invalid-feedback d-block">
-                {{ errors.categoryId }}
+            <div class="w-50">
+                <label class=" form-label">Category *</label>
+                <select class="form-select" v-model="formData.categoryId" :class="{ 'is-invalid': errors.categoryId }"
+                    @change="validatedField('categoryId', formData.categoryId, 'Category is required')">
+                    <option value="" disabled>Select category</option>
+                    <option v-for="category in categoryStore.categories" :key="category.id" :value="category.id">
+                        {{ category.name }}
+                    </option>
+                </select>
+                <div v-if="errors.categoryId" class="invalid-feedback d-block">
+                    {{ errors.categoryId }}
+                </div>
             </div>
         </div>
-        <div>
-            <BaseInput class="mt-4" label="Stock *" v-model="formData.stock" :error="errors.stock"
+        <div class="d-flex gap-3 mt-4">
+            <BaseInput class="w-50" label="Stock *" v-model="formData.stock" :error="errors.stock"
                 @blur="validatedField('stock', formData.stock, 'Stock is required')" />
-        </div>
-        <div>
-            <BaseInput class="mt-4" label="Price *" v-model="formData.price" :error="errors.price"
-                @blur="validatedField('price', formData.price, 'Price is required')" />
+                <BaseInput class="w-50" label="Price *" v-model="formData.price" :error="errors.price"
+                    @blur="validatedField('price', formData.price, 'Price is required')" />
         </div>
         <div>
             <label class="form-label mt-3">Thumbnail</label>
@@ -57,7 +55,7 @@ const { errors, validatedField } = useRequiredValidator();
 const formData = ref({
     title: '',
     categoryId: '',
-    thumbnail: null,
+    thumbnail: '',
     content: '',
     stock: "",
     price: "",

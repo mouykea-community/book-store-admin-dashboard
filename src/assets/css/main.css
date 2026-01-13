@@ -1,4 +1,4 @@
-.form-control.is-invalid {
+.form-control.is-invalid , .form-select.is-invalid {
     border-color: var(--bs-form-invalid-border-color);
     padding-right: calc(1.5em + .75rem);
     background: none !important;

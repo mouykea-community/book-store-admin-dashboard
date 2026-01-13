@@ -34,8 +34,8 @@ import BaseModal from '@/components/ui/base/BaseModal.vue';
 const bookStore = useBookStore();
 const categoryStore = useCategoryStore();
 onMounted(async () => {
-    await bookStore.fetchAllBooks();
-    await categoryStore.fetchAllCategories();
+    await bookStore.fetchAllBookNoParam();
+    await categoryStore.fetchAllCategoryNoParam();
     console.log("category ", categoryStore.categories);
 });
 const listData = ref(
@@ -44,7 +44,7 @@ const listData = ref(
             id: 1,
             link: '/book',
             title: "Total Books",
-            value: bookStore?.books?.length,
+            value: bookStore?.booksNoParam?.length,
             image: "📘",
             bgColor: 'oklch(71.8% 0.202 349.761)'
         },
@@ -52,7 +52,7 @@ const listData = ref(
             id: 2,
             link: '/category',
             title: "Categories",
-            value: categoryStore?.categories?.length,
+            value: categoryStore?.categoriesNoParam?.length,
             image : '🗂' ,
             bgColor: 'oklch(70.7% 0.165 254.624)'
         },
