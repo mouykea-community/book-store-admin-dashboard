@@ -12,7 +12,7 @@
                         <button type="button" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Create New Book</button>
                     </div>
                 </div>
-                <div class="col-4" v-for="data in listData" :key="data">
+                <div class="col-4" v-for="data in listData" :key="data.id">
                     <BaseCard :linkTo="data.link" :title="data.title" :value="data.value" :icon="data.icon" :bg-color="data.bgColor" >
                         <template #image>
                             <h1>
@@ -27,10 +27,9 @@
 </template>
 <script setup>
 import BaseCard from '@/components/ui/base/BaseCard.vue';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useBookStore } from '@/stores/book';
 import { useCategoryStore } from '@/stores/category';
-import BaseModal from '@/components/ui/base/BaseModal.vue';
 const bookStore = useBookStore();
 const categoryStore = useCategoryStore();
 onMounted(async () => {
@@ -38,13 +37,14 @@ onMounted(async () => {
     await categoryStore.fetchAllCategoryNoParam();
     console.log("category ", categoryStore.categories);
 });
-const listData = ref(
-    [
+const totalBooks = computed(() => bookStore.booksNoParam?.length ?? 0);
+const totalCategories = computed(() => categoryStore.categoriesNoParam?.length ?? 0);
+const listData = computed(() => ([
         {
             id: 1,
             link: '/book',
             title: "Total Books",
-            value: bookStore?.booksNoParam?.length,
+            value: totalBooks.value,
             image: "📘",
             bgColor: 'oklch(71.8% 0.202 349.761)'
         },
@@ -52,7 +52,7 @@ const listData = ref(
             id: 2,
             link: '/category',
             title: "Categories",
-            value: categoryStore?.categoriesNoParam?.length,
+            value: totalCategories.value,
             image : '🗂' ,
             bgColor: 'oklch(70.7% 0.165 254.624)'
         },
@@ -72,6 +72,5 @@ const listData = ref(
             image : '🧾',
             bgColor: 'oklch(62.7% 0.265 303.9)'
         },
-    ]
-)
+    ]))
 </script>
