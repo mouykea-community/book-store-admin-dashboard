@@ -34,11 +34,7 @@ const isLoading = ref(false);
 const router = useRouter();
 const handleCreateBook = async () => {
     const formRef = bookFormRef.value;
-    const book = formRef.formData.value;
-
-    // console.log("Category:", book?.categoryId);
-    // console.log("Thumbnail file:", book.thumbnail);
-    // console.log("Thumbnail name:", book.thumbnail?.name);
+    const book = formRef.formData;
 
     if (!formRef.validateForm()) {
         return;
@@ -57,7 +53,7 @@ const handleCreateBook = async () => {
 
         // ⬇️ VERY IMPORTANT: send the actual file
         if (book.thumbnail) {
-            formData.append('image_url', book?.value.thumbnail); // 'image' = field name in backend
+            formData.append('image_url', book?.thumbnail); // 'image' = field name in backend
         }
 
         await bookStore.fetchCreateBook(formData);

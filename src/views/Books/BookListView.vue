@@ -58,6 +58,14 @@
                                 {{ item.status }}
                             </p>
                         </template>
+                        <template #column-image="{ item }">
+                            <div v-if="item.image">
+                                <img :src="item.image" alt="" width="50px" height="50px" style="object-fit: cover;">
+                            </div>
+                            <div v-else>
+                                <img src="https://www.contentviewspro.com/wp-content/uploads/2017/07/default_image.png" alt="" width="50px" height="50px" style="object-fit: cover;">
+                            </div>
+                        </template>
                         <template #column-category_id="{ item }">
                             {{ item.category_id?.name }}
                         </template>
@@ -82,6 +90,7 @@ const columns = ref([
     {key : 'stock' , label : 'Stock'},
     {key : 'price' , label : 'Price'},
     { key: 'description', label: "Description" },
+    { key: "image" , label : "Thumbnail" },
     { key: 'status', label: 'Status' },
 ]);
 onMounted(async () => {
@@ -89,6 +98,7 @@ onMounted(async () => {
         isLoading.value = true;
         await categoryStore.fetchAllCategories();
         await bookStore.fetchAllBooks();
+        console.log("book URL" ,bookStore.books.image);
     } catch (err) {
         console.log(err);
     } finally {
